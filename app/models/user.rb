@@ -2,6 +2,8 @@ class User < ApplicationRecord
   attr_accessor :remember_token
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
+  has_many :borrowings
+
   validates :name, presence: true, length: {maximum: Settings.name_max}
   validates :email, presence: true, length: {maximum: Settings.email_max},
                     format: {with: VALID_EMAIL_REGEX},
@@ -27,7 +29,7 @@ class User < ApplicationRecord
   end
 
   def remember
-    @remember_token = User.new_token
+    self.remember_token = User.new_token
     update_attributes remember_digest: User.digest(remember_token)
   end
 
@@ -38,6 +40,10 @@ class User < ApplicationRecord
 
   def forget
     update_attributes remember_digest: nil
+  end
+
+  def current_user? current_user
+    self == current_user
   end
 
   private
