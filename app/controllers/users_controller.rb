@@ -1,8 +1,7 @@
 class UsersController < ApplicationController
   before_action :find_user, only: [:show, :edit, :update, :destroy]
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
-  before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: :destroy
+  before_action :admin_user, except: [:show]
 
   def index
     @users = User.select(:id, :name, :email, :admin).order(:name)
@@ -16,9 +15,8 @@ class UsersController < ApplicationController
   def create
     @user = User.new user_params
     if @user.save
-      log_in @user
       flash[:success] = t "flash_success"
-      redirect_to @user
+      redirect_to users_url
     else
       render :new
     end
@@ -31,7 +29,7 @@ class UsersController < ApplicationController
   def update
     if @user.update_attributes user_params
       flash[:success] = t "flash_update_success"
-      redirect_to @user
+      redirect_to users_url
     else
       render :edit
     end

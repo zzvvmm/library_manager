@@ -23,10 +23,10 @@ ActiveRecord::Schema.define(version: 20180718093856) do
   end
 
   create_table "books_categories", id: false, force: :cascade do |t|
-    t.integer "books_id"
-    t.integer "categories_id"
-    t.index ["books_id"], name: "index_books_categories_on_books_id"
-    t.index ["categories_id"], name: "index_books_categories_on_categories_id"
+    t.integer "book_id"
+    t.integer "category_id"
+    t.index ["book_id"], name: "index_books_categories_on_book_id"
+    t.index ["category_id"], name: "index_books_categories_on_category_id"
   end
 
   create_table "categories", force: :cascade do |t|

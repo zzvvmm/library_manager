@@ -4,5 +4,6 @@
   <% if current_user.admin? && !user.current_user?(current_user) %>
     <%= link_to t("delete"), user, method: :delete,
       data: {confirm: t("confirm")} %>
+    <%= link_to t("settings"), edit_user_path(user) %>
   <% end %>
 </li>

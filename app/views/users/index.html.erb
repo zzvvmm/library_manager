@@ -1,10 +1,14 @@
-<% provide :title, t("all_users") %>
-<h1><%= t("all_users") %></h1>
+<% if @current_user.admin? %>
+  <%= link_to t("new_user"), signup_path, class: "btn btn-sm btn-primary button-center" %>
+  <% provide :title, t("all_users") %>
+  <h1><%= t "all_users"  %></h1>
+  <%= paginate @users, theme: "twitter-bootstrap-3" %>
 
-<%= paginate @users, theme: "twitter-bootstrap-3" %>
+    <ul class="users">
+      <%= render @users %>
+    </ul>
 
-  <ul class="users">
-    <%= render @users %>
-  </ul>
-
-<%= paginate @users, theme: "twitter-bootstrap-3" %>
+  <%= paginate @users, theme: "twitter-bootstrap-3" %>
+<% else %>
+  <p class="text-danger">You are not authorized to view this page!</p>
+<% end %>
