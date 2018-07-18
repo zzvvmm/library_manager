@@ -10,7 +10,43 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180712085431) do
+ActiveRecord::Schema.define(version: 20180718093856) do
+
+  create_table "books", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.string "author"
+    t.string "publisher"
+    t.boolean "is_borrowed"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "books_categories", id: false, force: :cascade do |t|
+    t.integer "books_id"
+    t.integer "categories_id"
+    t.index ["books_id"], name: "index_books_categories_on_books_id"
+    t.index ["categories_id"], name: "index_books_categories_on_categories_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "requests", force: :cascade do |t|
+    t.integer "book_id"
+    t.integer "user_id"
+    t.datetime "borrow_time"
+    t.datetime "return_time"
+    t.boolean "accepted"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_requests_on_book_id"
+    t.index ["user_id"], name: "index_requests_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
