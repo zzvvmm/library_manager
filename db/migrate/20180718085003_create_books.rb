@@ -6,7 +6,7 @@ class CreateBooks < ActiveRecord::Migration[5.1]
       t.string :author
       t.string :publisher
       t.boolean :is_borrowed
-
+      
       t.timestamps
     end
   end
