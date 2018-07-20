@@ -1,5 +1,6 @@
 @import 'bootstrap-sprockets';
 @import 'bootstrap';
+@import 'bootstrap-datetimepicker';
 
 $gray-medium-light: #eaeaea;
 
@@ -185,8 +186,13 @@ input {
   }
 }
 
-.button-center{
-  margin:auto;
-  display:block;
-  width:20%;
+.button-center {
+  margin: auto;
+  display: block;
+  width: 20%;
+}
+
+.ngan {
+  width: 180px;
+  margin-left: 30px;
 }

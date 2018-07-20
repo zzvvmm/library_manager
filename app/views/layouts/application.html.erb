@@ -4,6 +4,9 @@
     <title><%= full_title yield(:title) %></title>
     <%= render "layouts/rails_default" %>
     <%= render "layouts/shim" %>
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/3/yeti/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
   </head>
 
   <body>
@@ -14,7 +17,6 @@
       <% end %>
       <%= yield %>
       <%= render "layouts/footer" %>
-      <%= debug(params) if Rails.env.development? %>
     </div>
   </body>
 </html>

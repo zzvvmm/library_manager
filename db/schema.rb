@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180718093856) do
+ActiveRecord::Schema.define(version: 20180719065700) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "books", force: :cascade do |t|
     t.string "title"
@@ -20,11 +23,13 @@ ActiveRecord::Schema.define(version: 20180718093856) do
     t.boolean "is_borrowed"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_books_on_user_id"
   end
 
   create_table "books_categories", id: false, force: :cascade do |t|
-    t.integer "book_id"
-    t.integer "category_id"
+    t.bigint "book_id"
+    t.bigint "category_id"
     t.index ["book_id"], name: "index_books_categories_on_book_id"
     t.index ["category_id"], name: "index_books_categories_on_category_id"
   end
@@ -36,9 +41,16 @@ ActiveRecord::Schema.define(version: 20180718093856) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "posts", force: :cascade do |t|
+    t.string "title"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "requests", force: :cascade do |t|
-    t.integer "book_id"
-    t.integer "user_id"
+    t.bigint "book_id"
+    t.bigint "user_id"
     t.datetime "borrow_time"
     t.datetime "return_time"
     t.boolean "accepted"
@@ -59,4 +71,5 @@ ActiveRecord::Schema.define(version: 20180718093856) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "books", "users"
 end

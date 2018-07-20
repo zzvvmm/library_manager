@@ -1,9 +1,20 @@
 class User < ApplicationRecord
-  attr_accessor :remember_token
+  include PgSearch
+  pg_search_scope :search_by_full_name,
+    :against => {
+      name: "A",
+      email: "B",
+    },
+    :using => {
+      :tsearch => {:any_word => true}
+    }
+
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
-  has_many :books
+  attr_accessor :remember_token
+
   has_many :requests
+  has_many :books, through: :requests
 
   validates :name, presence: true, length: {maximum: Settings.name_max}
   validates :email, presence: true, length: {maximum: Settings.email_max},

@@ -1,5 +1,13 @@
 class SessionsController < ApplicationController
-  def new; end
+  def new
+    if current_user
+      if current_user.admin?
+        redirect_to users_path
+      else
+        redirect_to books_path
+      end
+    end
+  end
 
   def create
     user = User.find_by email: sess[:email].downcase

@@ -1,0 +1,41 @@
+<% if current_user.admin? %>
+  <p id="notice"><%= notice %></p>
+
+  <p class="lead">All Categories</p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th colspan="2"></th>
+        </tr>
+      </thead>
+      <% @categories.each do |category| %>
+        <tbody>
+          <tr>
+            <td><%= category.name %></td>
+            <td><%= category.description.truncate(80) %></td>
+            <td><%= link_to "Edit", edit_category_path(category), :class => "btn btn-warning", :style => "color: #ffffff" %></td>
+            <td><%= link_to "Delete", category, method: :delete, data: { confirm: "Are you sure?" }, :class => "btn btn-danger", :style => "color: #ffffff" %></td>
+      <% end %>
+        </tr>
+      </tbody>
+    </table>
+    <%= paginate @categories, theme: "twitter-bootstrap-3" %>
+    <br>
+    <br><br><br><br>
+
+    <%= link_to "Add Category", new_category_path, :class => "btn btn-success", :style => "color: #ffffff" %>
+<% else %>
+  <h1><b>All Books</b></h1>
+
+  <% @books.each do |book| %>
+
+    <h3><%= link_to book.title, book_path(book.id) %></h3>
+
+    <p><%= truncate(book.content , length: 50) %></p>
+    <hr>
+  <% end %>
+
+  <%= paginate @books, theme: "twitter-bootstrap-3" %>
+<% end %>

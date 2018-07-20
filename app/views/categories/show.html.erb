@@ -1,0 +1,19 @@
+<h1><b><%= @category.name %></b></h1>
+
+<% if !@books.empty? %>
+  <% @books.each do |book| %>
+
+    <h3><%= link_to book.title, book_path(book.id) %></h3>
+
+    <p><%= truncate(book.description, length: 400) %></p>
+    <hr>
+  <% end %>
+
+  <%= paginate @books, theme: "twitter-bootstrap-3" %>
+<% end %>
+
+
+
+
+
+<%= link_to "Back", categories_path, :class => "btn btn-warning", :style => "color: #ffffff" %>

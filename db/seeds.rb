@@ -13,3 +13,7 @@ User.create!(name: "Nguyen Dinh Duc",
     password: password,
     password_confirmation: password)
 end
+
+30.times do
+  Book.create!(title: Faker::Book.title, author: Faker::Book.author, description: Faker::Lorem.paragraph(30, 10))
+end

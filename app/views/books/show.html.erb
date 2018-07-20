@@ -1,0 +1,115 @@
+<% if current_user.admin? %>
+<p id="notice"><%= notice %></p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th><strong>Title</strong></th>
+      <th><strong>Description</strong></th>
+      <th><strong>Author</strong></th>
+
+      <th><strong>Status</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td><%= @book.title %></td>
+      <td><%= @book.description.truncate(100) %></td>
+      <td><%= @book.author %></td>
+      <% if @book.is_borrowed %>
+      <td><span class="label label-danger">Borrowed</span></td>
+      <%else%>
+      <td><span class="label label-success">Available</span></td>
+      <%end%>
+    </table>
+
+    <%= link_to "Edit", edit_book_path(@book), :class => "btn btn-danger", :style => "color: #ffffff" %> |
+    <%= link_to "Back", books_path, :class => "btn btn-warning", :style => "color: #ffffff" %>
+<% else %>
+
+
+  <h1><b><%= @book.title %></b></h1>
+  <p><b>Author: <%= @book.author %></b></p>
+  <% @categories = @book.categories %>
+  <% if !@categories.blank? %>
+    <p><b>Categories: </b>
+      <% @categories.each do |category| %>
+
+        <%= link_to category.name, category_path(:id => category.id) %>
+      <% end %>
+    </p>
+  <% end %>
+
+  <i>Created <%= time_ago_in_words(@book.created_at) %> ago</i>
+  <hr>
+  <br>
+  <p><%= @book.description %></p>
+  <hr>
+  <p>
+    <% if @book.is_borrowed? %>
+      <button class="btn btn-danger disabled">
+        Borrowed!
+      </button>
+    <% else %>
+      <% if @book.users.include?(current_user) %>
+        <p>Ban da request muon quyen sach nay. Xin cho admin chap nhan </p>
+        <%= @book.find_request(user_id: current_user.id) %>
+        <%= link_to t("cancel_request"), request_cancel_path(book_id: @book.id, user_id: current_user.id), :class => "btn btn-warning", :style => "color: #ffffff" %>
+      <% else %>
+          <%= form_for(@request) do |f| %>
+            <%= hidden_field_tag :user_id, current_user.id %>
+            <%= hidden_field_tag :book_id, @book.id %>
+
+            <div class="container">
+              <div class='col-md-4'>
+                  From:
+                  <div class="form-group">
+                      <div class='input-group date' id='borrow_time'>
+                          <input type='text' class="form-control" name='borrow_time' />
+                          <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-calendar"></span>
+                          </span>
+                      </div>
+                  </div>
+              </div>
+              <div class='col-md-4'>
+                  To:
+                  <div class="form-group">
+                      <div class='input-group date' id='return_time'>
+                          <input type='text' class="form-control" name='return_time' />
+                          <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-calendar"></span>
+                          </span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        <%= f.submit "Request to borrow this book", :class => "btn btn-primary btn-sm ngan", :style => "color: #ffffff" %>
+
+
+          <% end %>
+
+        <script type="text/javascript">
+          $(document).ready(function () {
+              $('#borrow_time').datetimepicker({
+                format:'d-M-Y H:mm:ss'
+              });
+              $('#return_time').datetimepicker({
+                useCurrent: false,
+                format:'d-M-Y H:mm:ss'
+              });
+              $("#borrow_time").on("dp.change", function (e) {
+                  $('#return_time').data("DateTimePicker").minDate(e.date);
+              });
+              $("#return_time").on("dp.change", function (e) {
+                  $('#borrow_time').data("DateTimePicker").maxDate(e.date);
+              });
+          });
+        </script>
+
+      <% end %>
+    <% end %>
+  </p>
+
+<% end %>

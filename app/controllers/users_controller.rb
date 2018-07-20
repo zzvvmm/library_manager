@@ -1,11 +1,16 @@
 class UsersController < ApplicationController
   before_action :find_user, only: [:show, :edit, :update, :destroy]
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
-  before_action :admin_user, except: [:show]
+  before_action :admin_user, except: [:show, :new, :create]
 
   def index
-    @users = User.select(:id, :name, :email, :admin).order(:name)
+    if params[:term]
+      @users = User.search_by_full_name(params[:term]).select(:id, :name, :email, :admin).order(:name)
       .page(params[:page]).per Settings.users_per_page
+    else
+      @users = User.select(:id, :name, :email, :admin).order(:name)
+      .page(params[:page]).per Settings.users_per_page
+    end
   end
 
   def new

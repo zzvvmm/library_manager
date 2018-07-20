@@ -1,0 +1,45 @@
+<% if current_user.admin? %>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th>Requested by</th>
+        <th>Time start borrowing</th>
+        <th>Time return</th>
+        <th>Approve</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @requests.each do |request| %>
+        <% @book = Book.find(request.book_id) %>
+        <% @user = User.find(request.user_id) %>
+
+        <tr>
+        <td><%= @book.title %></td>
+        <td><%= @user.name %>&nbsp(&nbsp<%=@user.email%>&nbsp)</td>
+        <td><%= request.borrow_time %></td>
+        <td><%= request.return_time %></td>
+        <% if @book.is_borrowed? %>
+          <% if @book.user_id == request.user_id %>
+            <td><%= link_to t("return_soon"), return_soon_path(id: @book.id, request_id: request.id, user_id: @user.id), :class => "btn btn-warning", :style => "color: #ffffff" %></td>
+          <% else %>
+            <td>
+              <button class="btn btn-danger disabled">
+                Borrowed!
+              </button>
+            </td>
+          <% end %>
+        <% else %>
+          <td><%= link_to t("aprrove"), request_approve_path(id: request.id, book_id: @book.id, user_id: @user.id), :class => "btn btn-success", :style => "color: #ffffff" %></td>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+<%else%>
+<blockquote>
+  <p class="text-danger">You are not authorized to view this page!</p>
+</blockquote>
+<% end %>
+</br>
+<%= link_to 'Back', :back, :class => "btn btn-warning", :style => "color: #ffffff" %>

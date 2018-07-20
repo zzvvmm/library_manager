@@ -18,5 +18,6 @@ module SampleApp
     I18n.available_locales = [:en, :vi]
     I18n.default_locale = :vi
     config.generators.system_tests = nil
+    config.active_record.schema_format = :sql
   end
 end
