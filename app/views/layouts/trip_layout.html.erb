@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= t "base_title" %></title>
+    <%= render "layouts/rails_default" %>
+  </head>
+
+  <body>
+    <div id="modal-window" class="modal hide fade" role="dialog"
+      aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+      </div>
+    </div>
+    <%= render "layouts/header" %>
+    <% flash.each do |message_type, message| %>
+      <%= content_tag :div, message,
+        class: "alert alert-#{message_type}" %>
+    <% end %>
+    <input class="hidden-data" id="origin" value="<%= @trip.begin %>"></input>
+    <input class="hidden-data" id="destination" value="<%= @trip.place.name %>"></input>
+    <div class="wrapper">
+      <!-- Sidebar -->
+      <nav id="sidebar">
+        <nav id="sidebar">
+          <div class="sidebar-header text-center">
+            <h2><%= link_to @trip.name, @trip %></h2>
+          </div>
+
+          <ul class="list-unstyled components">
+            <p class="text-center"><%= @trip.owner.name %></p>
+            <li class="active">
+              <%= link_to t("trip_info"), "#homeSubmenu",
+                data: {toggle: "collapse"},
+                aria: {expanded: "false"},
+                class: "dropdown-toggle" %>
+              <ul class="collapse list-unstyled" id="homeSubmenu">
+                <li>
+                  <%= link_to t("plant"), trip_path(trip: @trip,
+                    content: :plant) %>
+                </li>
+                <li>
+                  <%= link_to t("expense"), trip_path(trip: @trip,
+                    content: :expense) %>
+                </li>
+                <li>
+                  <%= link_to t("group_member"),
+                    trip_participations_path(trip_id: @trip.id,
+                    accepted: :join_in) %>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <% if current_user.is_user? @trip.owner %>
+                <%= link_to t("add_member"),
+                  trip_searchs_path(trip_id: @trip.id) %>
+                <%= link_to "Send Notification",
+                  new_trip_notification_path(trip_id: @trip.id) %>
+                <%= link_to "Chance Plant", edit_trip_path(field: :plant) %>
+                <%= link_to "Chance Expense", edit_trip_path(field: :expense) %>
+                <%= link_to "Check Request",
+                  trip_participations_path(trip_id: @trip,
+                  accepted: :send_request) %>
+              <% end %>
+            </li>
+          </ul>
+          <ul>
+            <% if current_user.is_user? @trip.owner %>
+              <li><%= link_to "Delete Trip", @trip, method: :delete,
+               data: {confirm: t("confirm_delete")} %></li>
+            <% else %>
+              <li><%= link_to t("out_group"),
+                trip_participation_path(trip_id: @trip.id), method: :delete,
+                data: {confirm: t("confirm_delete")} %></li>
+            <% end %>
+          </ul>
+        </nav>
+      </nav>
+
+      <!-- Page Content -->
+      <div id="content">
+        <button type="button" id="sidebarCollapse" class="navbar-btn">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <%= yield %>
+
+      </div>
+
+    </div>
+
+    <% if @chatroom %>
+      <%= render "chat" %>
+    <% end %>
+    <%= render "layouts/footer" %>
+  </body>
+</html>

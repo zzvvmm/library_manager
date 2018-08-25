@@ -1,0 +1,24 @@
+<div class="row" id="list">
+  <div class="col-md-2">
+    <%= image_tag "latest_3.jpg", size: 150 %>
+  </div>
+  <div class="col-md-5">
+    <ul>
+      <li><h2><%= trip.name %></h2></li>
+      <li><%= t "owner" %><%= trip.owner.name %></li>
+      <li><%= t "begin" %><%= trip.begin %></li>
+      <li><%= t "destination" %><%= trip.place.name %></li>
+      <li><%= t "member" %><% trip.members.count %></li>
+    </ul>
+  </div>
+  <% if logged_in? %>
+    <div class="col-md-10" id="send_request_button">
+      <%= button_to t("send_request"),
+        trip_participations_path(user_id: current_user.id,
+        trip_id: trip.id,
+        accepted: :send_request),
+        disabled: trip.members.include?(current_user),
+        class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

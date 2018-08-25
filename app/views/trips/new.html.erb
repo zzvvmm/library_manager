@@ -1,0 +1,134 @@
+<% provide :title, t("title") %>
+<% provide :button_text, t("title") %>
+<body>
+<div class="row" id="form-row">
+  <div class="col-md-4 offset-md-0">
+    <h1><%= "CreateTrip" %></h1>
+    <%= form_for @trip do |f|%>
+      <%= render "shared/error_messages", object: f.object %>
+
+      <%= f.hidden_field :user_id, value: current_user.id %>
+
+      <%= f.label :name, t("trip_name") %>
+      <%= f.text_field :name, class: "form-control"  %>
+      <%= f.label :begin, t("origin_location") %>
+      <%= f.text_field :begin, class: "form-control", placeholder: t("origin_location"), id: "origin-input" %>
+      <%= f.label :destination, t("destination_location") %>
+
+      <%= f.fields_for :place, Place.new do |ff| %>
+        <%= ff.text_field :name, class: "form-control", id: "destination-input",placeholder: t("destination_location") %>
+      <% end %>
+      <br>
+      <%= f.submit yield(:button_text), class: "btn btn-primary" %>
+    <% end %>
+
+  </div>
+  <div class="col-md-8 offset-md-0">
+    <div id="mode-selector" class="controls">
+      <input type="radio" name="type" id="changemode-walking">
+      <label for="changemode-walking">Walking</label>
+
+      <input type="radio" name="type" id="changemode-transit">
+      <label for="changemode-transit">Transit</label>
+
+      <input type="radio" name="type" id="changemode-driving" checked="checked">
+      <label for="changemode-driving">Driving</label>
+    </div>
+
+    <div id="map-new-trip"></div>
+  </div>
+</div>
+
+    <script>
+      var stat = false;
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map-new-trip'), {
+          mapTypeControl: false,
+          center: {lat: 21, lng: 105.8},
+          zoom: 12
+        });
+
+        new AutocompleteDirectionsHandler(map);
+      }
+
+      function AutocompleteDirectionsHandler(map) {
+        this.map = map;
+        this.originPlaceId = null;
+        this.destinationPlaceId = null;
+        this.travelMode = 'DRIVING';
+        var originInput = document.getElementById('origin-input');
+        var destinationInput = document.getElementById('destination-input');
+        var modeSelector = document.getElementById('mode-selector');
+        this.directionsService = new google.maps.DirectionsService;
+        this.directionsDisplay = new google.maps.DirectionsRenderer;
+        this.directionsDisplay.setMap(map);
+
+        var originAutocomplete = new google.maps.places.Autocomplete(
+            originInput, {placeIdOnly: true});
+        var destinationAutocomplete = new google.maps.places.Autocomplete(
+            destinationInput, {placeIdOnly: true});
+
+        this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
+        this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
+      }
+
+      AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, mode) {
+        var radioButton = document.getElementById(id);
+        var me = this;
+        radioButton.addEventListener('click', function() {
+          me.travelMode = mode;
+          me.route();
+        });
+      };
+
+      AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(autocomplete, mode) {
+        var me = this;
+        autocomplete.bindTo('bounds', this.map);
+        autocomplete.addListener('place_changed', function() {
+          var place = autocomplete.getPlace();
+          if (!place.place_id) {
+            window.alert("Please select an option from the dropdown list.");
+            return;
+          }
+          if (mode === 'ORIG') {
+            me.originPlaceId = place.place_id;
+          } else {
+            me.destinationPlaceId = place.place_id;
+          }
+          me.route();
+        });
+
+      };
+
+      AutocompleteDirectionsHandler.prototype.route = function() {
+        if (!this.originPlaceId || !this.destinationPlaceId) {
+          return;
+        }
+        var me = this;
+
+        this.directionsService.route({
+          origin: {'placeId': this.originPlaceId},
+          destination: {'placeId': this.destinationPlaceId},
+          travelMode: this.travelMode
+        }, function(response, status) {
+          if (status === 'OK') {
+            stat = true;
+            me.directionsDisplay.setDirections(response);
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
+      };
+      $(document).ready(function () {
+        $('#new_trip').submit(function(event){
+          if (!stat){
+            alert(stat1 + stat2 + 'Location not found!: ' + status);
+            return false;
+          };
+        });
+      })
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEGMQbGWSDr1NX836ETayJrGv3WqHaxo4&libraries=places&callback=initMap"
+        async defer></script>
+</body>

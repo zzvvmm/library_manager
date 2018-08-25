@@ -1,0 +1,50 @@
+<%= provide :title, @content %>
+<% provide :title, t("title") %>
+
+<% if @content == "plant" %>
+  <div id="right-panel">
+    <% if current_user.is_user? @trip.owner %>
+      <%= form_for (Plant.new), url: plants_path do |f| %>
+        <%= f.hidden_field :trip_id, value: @trip.id %>
+
+        <%= f.text_field :description, class: "form-control plant-form", placeholder: t("plant_description") %>
+
+        <%= f.fields_for :place, Place.new do |ff| %>
+          <%= ff.text_field :name, class: "form-control plant-form", id: "place-input",placeholder: t("plant_location") %>
+        <% end %>
+
+        <%= f.submit t("create_plant"), class: "btn btn-primary" %>
+      <% end %>
+    <% end %>
+    <p>Total Distance: <span id="total"></span></p>
+    <% if @plants.any? %>
+      <% @plants.each do |plant| %>
+        <input class="plant-places hidden-data" value="<%= plant.place.name %>" data-name="<%= plant.name %>" data-des="<%= plant.description %>" data-id="<%= plant.id %>"></input>
+        <% if current_user.is_user? @trip.owner %>
+          <p  class="hidden-data"><%= link_to t("delete"), plant_path(plant), method: :delete, class: "btn btn-danger", id: plant.id,
+            data: {confirm: t("are_you_sure?")} %>
+          </p>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+  <div id="map-show-trip"></div>
+
+  <!-- Replace the value of the key parameter with your own API key. -->
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEGMQbGWSDr1NX836ETayJrGv3WqHaxo4&libraries=places&callback=initMap">
+  </script>
+
+<% elsif @content == "expense" %>
+  <div id="content-sidebar">
+    <%= @trip.expense %>
+  </div>
+<% else %>
+  <div id="content-sidebar">
+    <ul>
+    <% @notifications.each do |notification| %>
+      <%= render notification %>
+    <% end %>
+  </ul>
+  </div>
+<% end %>

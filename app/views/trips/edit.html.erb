@@ -1,0 +1,19 @@
+<% provide :title, @field %>
+<div class="field">
+  <%= form_for @trip do |f| %>
+    <%= render "shared/error_messages", object: f.object %>
+    <%= f.hidden_field :field, value: @field %>
+    <br>
+    <% if @field == "plant" %>
+      <%= f.text_area :plant, rows: Settings.rows,
+        cols: Settings.cols, class: "form-control" %>
+    <% end %>
+
+    <% if @field == "expense" %>
+      <%= f.text_area :expense, rows: Settings.rows,
+        cols: Settings.cols, class: "form-control" %>
+    <% end %>
+    <br>
+    <%= f.submit "Chance", class: "btn btn-primary" %>
+  <% end %>
+</div>
