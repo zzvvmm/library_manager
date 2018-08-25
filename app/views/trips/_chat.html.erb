@@ -1,0 +1,50 @@
+<div class="container text-center">
+  <div class="row">
+    <div class="chat-button">
+      <button id="addClass" class="btn"><span class="glyphicon glyphicon-comment"></span><%= t "open_chat" %></button>
+    </div>
+    <hr>
+  </div>
+</div>
+<div class="popup-box chat-popup" id="qnimate">
+  <div class="popup-head">
+    <div class="popup-head-left pull-left">
+      <%= @chatroom.topic %>
+    </div>
+    <div class="popup-head-right pull-right">
+      <div class="btn-group">
+      </div>
+      <button data-widget="remove" id="removeClass"
+        class="chat-header-button pull-right" type="button">
+        <i class="glyphicon glyphicon-off"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="popup-messages" id="scroll">
+    <div class="direct-chat-messages">
+      <% if @chatroom.messages.all.length > 10 %>
+        <button id="load-more" class="btn">
+          <%= t "load_more" %>
+        </button>
+      <% end %>
+      <% if @messages.any? %>
+        <div class="card-body" id="messages">
+          <%= render partial: "messages/message", collection: @messages %>
+        </div>
+      <%else%>
+        <div class="card-body hidden" id="messages"></div>
+      <%end%>
+    </div>
+  </div>
+  <div class="popup-messages-footer">
+    <%= render partial: "messages/message_form", locals: {message: @message, chatroom: @chatroom}%>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).on("click","#load-more",function(){
+    $('#load-more').hide()
+    <% @messages = @chatroom.messages %>
+   $('#messages').html("<%= j render(partial: 'messages/message', collection: @messages  ) %>");
+   });
+</script>

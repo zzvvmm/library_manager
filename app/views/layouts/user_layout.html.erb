@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= t "base_title" %></title>
+    <%= render "layouts/rails_default" %>
+  </head>
+
+  <body>
+    <div id="modal-window" class="modal hide fade" role="dialog"
+      aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content"></div>
+      </div>
+    </div>
+    <%= render "layouts/header" %>
+    <% flash.each do |message_type, message| %>
+      <%= content_tag :div, message, class: "alert alert-#{message_type}" %>
+    <% end %>
+    <div class="wrapper">
+      <nav id="sidebar">
+        <div class="sidebar-header text-center">
+          <h2><%= t "dashboard" %></h2><br>
+          <h4><%= current_user.name %></h4>
+        </div>
+
+        <ul class="list-unstyled components">
+          <li class="active">
+            <%= link_to t("edit_profile"), edit_user_path(current_user) %>
+          </li>
+          <li>
+            <%= link_to t("reviews"), "#homeSubmenu1",
+              data: {toggle: "collapse"}, aria: {expanded: "false"},
+              class: "dropdown-toggle" %>
+            <ul class="collapse list-unstyled" id="homeSubmenu1">
+              <li>
+                <%= link_to t("create_review"), new_review_path %>
+              </li>
+              <li>
+                <%= link_to t("my_reviews"), reviews_path(field: :my_reviews) %>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <%= link_to t("trips"), "#homeSubmenu2",
+              data: {toggle: "collapse"}, aria: {expanded: "false"},
+              class: "dropdown-toggle" %>
+            <ul class="collapse list-unstyled" id="homeSubmenu2">
+              <li>
+                <%= link_to t("create_trips"), new_trip_path %>
+              </li>
+              <li>
+                <%= link_to t("my_trips"),
+                  user_trips_path(user_id: current_user.id) %>
+              </li>
+              <li>
+                <%= link_to t("my_request"),
+                  user_participations_path(user_id: current_user.id) %>
+              </li>
+            </ul>
+          </li>
+          <% if current_user.is_admin? %>
+            <li>
+              <%= link_to t("management"), "#homeSubmenu3",
+                data: {toggle: "collapse"}, aria: {expanded: "false"},
+                class: "dropdown-toggle" %>
+              <ul class="collapse list-unstyled" id="homeSubmenu3">
+                <li>
+                  <%= link_to t("users_management"), users_path %>
+                </li>
+                <li>
+                  <%= link_to t("reviews_management"), reviews_path %>
+                </li>
+                <li>
+                  <%= link_to t("trips_management"), trips_path %>
+                </li>
+              </ul>
+            </li>
+          <% end %>
+        </ul>
+      </nav>
+
+      <div class="super_container" id="content">
+        <button type="button" id="sidebarCollapse" class="navbar-btn">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div id="content-sidebar">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+    <%= render "layouts/footer" %>
+  </body>
+</html>
